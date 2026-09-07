@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PresupuestosPro</title>
+    <style>
+      :root {
+        --bg: #f3f7fb;
+        --panel: #ffffff;
+        --panel-alt: #eef4ff;
+        --accent: #2563eb;
+        --accent-soft: #dbeafe;
+        --success: #0f766e;
+        --text: #162033;
+        --muted: #5c6f89;
+        --border: #dbe3ef;
+        --danger: #b91c1c;
+        --shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(180deg, #eef6ff 0%, var(--bg) 100%);
+        color: var(--text);
+      }
+
+      .shell {
+        max-width: 1200px;
+        margin: 32px auto;
+        padding: 0 18px 40px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 18px 22px;
+        box-shadow: var(--shadow);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent), #60a5fa);
+        color: white;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: clamp(1.3rem, 2vw, 2rem);
+      }
+
+      .badge {
+        background: var(--accent-soft);
+        color: var(--accent);
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .layout {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 24px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 22px;
+      }
+
+      .panel h2 {
+        margin: 0 0 18px;
+        font-size: 1.1rem;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+        gap: 16px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .field label {
+        font-size: 0.82rem;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .field input,
+      .field select {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 11px 12px;
+        font-size: 1rem;
+        background: #fff;
+        color: var(--text);
+      }
+
+      .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 18px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .checkbox-row input {
+        width: 18px;
+        height: 18px;
+      }
+
+      .lines-panel {
+        margin-top: 26px;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      th {
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+      }
+
+      input[type="number"] {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 9px 10px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: 0;
+        border-radius: 10px;
+        padding: 11px 16px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+      }
+
+      button:hover { transform: translateY(-1px); }
+      button:active { transform: translateY(0); }
+
+      .primary {
+        background: var(--accent);
+        color: white;
+      }
+
+      .secondary {
+        background: var(--panel-alt);
+        color: var(--accent);
+      }
+
+      .warning {
+        background: #eff6ff;
+        color: var(--text);
+      }
+
+      .summary {
+        background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+      }
+
+      .totals {
+        display: grid;
+        gap: 12px;
+      }
+
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .total-row strong {
+        font-size: 1.1rem;
+      }
+
+      .highlight {
+        background: var(--success);
+        color: #fff;
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+      }
+
+      .history {
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
+      }
+
+      .history-list {
+        list-style: none;
+        padding: 0;
+        margin: 12px 0 0;
+        display: grid;
+        gap: 10px;
+      }
+
+      .history-item {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+      }
+
+      .history-item strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      @media (max-width: 860px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">P</div>
+          <h1>PresupuestosPro</h1>
+        </div>
+        <span class="badge">Versión local</span>
+      </header>
+
+      <main class="layout">
+        <section class="panel">
+          <h2>Perfil del freelance</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="freelancerName">Nombre</label>
+              <input id="freelancerName" type="text" value="Ana García" />
+            </div>
+            <div class="field">
+              <label for="freelancerEmail">Email</label>
+              <input id="freelancerEmail" type="email" value="ana@presupuestospro.es" />
+            </div>
+            <div class="field">
+              <label for="freelancerCif">NIF / CIF</label>
+              <input id="freelancerCif" type="text" value="12345678A" />
+            </div>
+            <div class="field">
+              <label for="freelancerCity">Ciudad</label>
+              <input id="freelancerCity" type="text" value="Madrid" />
+            </div>
+          </div>
+
+          <div class="lines-panel">
+            <h2>Conceptos del presupuesto</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Servicio</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody id="linesBody"></tbody>
+              </table>
+            </div>
+            <div class="actions">
+              <button type="button" class="secondary" id="addLineBtn">+ Añadir servicio</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel summary">
+          <h2>Cliente y resumen</h2>
+          <div class="form-grid">
+            <div class="field" style="grid-column: 1 / -1;">
+              <label for="customerName">Cliente</label>
+              <input id="customerName" type="text" value="Hotel Sol y Mar" />
+            </div>
+            <div class="field">
+              <label for="customerType">Tipo</label>
+              <select id="customerType">
+                <option value="empresa">Empresa</option>
+                <option value="particular">Particular</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="irpfRate">IRPF</label>
+              <select id="irpfRate">
+                <option value="15">15%</option>
+                <option value="7">7%</option>
+                <option value="0">0%</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="checkbox-row">
+            <input id="irpfEnabled" type="checkbox" checked />
+            <label for="irpfEnabled">Aplicar retención IRPF</label>
+          </div>
+
+          <div class="totals" style="margin-top: 20px;">
+            <div class="total-row"><span>Base imponible</span><strong id="baseValue">0,00 €</strong></div>
+            <div class="total-row"><span>IVA (21%)</span><strong id="ivaValue">0,00 €</strong></div>
+            <div class="total-row"><span>IRPF</span><strong id="irpfValue">0,00 €</strong></div>
+            <div class="highlight"><span>Total</span><strong id="totalValue">0,00 €</strong></div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="primary" id="saveQuoteBtn">Guardar presupuesto</button>
+            <button type="button" class="warning" id="exportPdfBtn">Exportar PDF</button>
+          </div>
+
+          <div class="history">
+            <h3 style="margin: 0;">Últimos presupuestos</h3>
+            <ul id="historyList" class="history-list"></ul>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script>
+      const defaultLines = [
+        { description: 'Diseño de página web', quantity: 1, price: 450 },
+        { description: 'Mantenimiento mensual', quantity: 3, price: 120 },
+        { description: 'SEO básico', quantity: 1, price: 180 },
+      ];
+
+      const state = {
+        lines: defaultLines.map((item) => ({ ...item })),
+      };
+
+      const linesBody = document.getElementById('linesBody');
+      const baseValue = document.getElementById('baseValue');
+      const ivaValue = document.getElementById('ivaValue');
+      const irpfValue = document.getElementById('irpfValue');
+      const totalValue = document.getElementById('totalValue');
+      const historyList = document.getElementById('historyList');
+
+      function formatMoney(value) {
+        return new Intl.NumberFormat('es-ES', {
+          style: 'currency',
+          currency: 'EUR',
+        }).format(value || 0);
+      }
+
+      function calculateTotals() {
+        const baseImponible = state.lines.reduce((sum, line) => {
+          const qty = Number(line.quantity || 0);
+          const price = Number(line.price || 0);
+          return sum + qty * price;
+        }, 0);
+
+        const iva = Number((baseImponible * 0.21).toFixed(2));
+        const customerType = document.getElementById('customerType').value;
+        const irpfEnabled = document.getElementById('irpfEnabled').checked;
+        const irpfRate = customerType === 'particular' ? 0 : Number(document.getElementById('irpfRate').value || 0);
+
+        const irpf = irpfEnabled && customerType !== 'particular' ? Number((baseImponible * irpfRate / 100).toFixed(2)) : 0;
+        const total = Number((baseImponible + iva - irpf).toFixed(2));
+
+        return { baseImponible, iva, irpf, total };
+      }
+
+      function renderLines() {
+        linesBody.innerHTML = '';
+        state.lines.forEach((line, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><input data-index="${index}" data-field="description" type="text" value="${line.description}" /></td>
+            <td><input data-index="${index}" data-field="quantity" type="number" min="0" step="1" value="${line.quantity}" /></td>
+            <td><input data-index="${index}" data-field="price" type="number" min="0" step="0.01" value="${line.price}" /></td>
+            <td>${formatMoney((Number(line.quantity || 0) * Number(line.price || 0)))}</td>
+          `;
+          linesBody.appendChild(row);
+        });
+      }
+
+      function renderSummary() {
+        const { baseImponible, iva, irpf, total } = calculateTotals();
+        baseValue.textContent = formatMoney(baseImponible);
+        ivaValue.textContent = formatMoney(iva);
+        irpfValue.textContent = formatMoney(irpf);
+        totalValue.textContent = formatMoney(total);
+      }
+
+      function updateLineValue(index, field, value) {
+        const numericFields = ['quantity', 'price'];
+        state.lines[index][field] = numericFields.includes(field) ? Number(value || 0) : value;
+        renderLines();
+        renderSummary();
+      }
+
+      function renderHistory() {
+        const quotes = JSON.parse(localStorage.getItem('presupuestosProQuotes') || '[]');
+        historyList.innerHTML = '';
+
+        if (!quotes.length) {
+          historyList.innerHTML = '<li class="history-item">Todavía no hay presupuestos guardados.</li>';
+          return;
+        }
+
+        quotes.slice(-3).reverse().forEach((quote) => {
+          const item = document.createElement('li');
+          item.className = 'history-item';
+          item.innerHTML = `
+            <strong>${quote.customer || 'Sin cliente'}</strong>
+            <span>${formatMoney(quote.total || 0)}</span>
+          `;
+          historyList.appendChild(item);
+        });
+      }
+
+      document.getElementById('addLineBtn').addEventListener('click', () => {
+        state.lines.push({ description: 'Nuevo servicio', quantity: 1, price: 0 });
+        renderLines();
+        renderSummary();
+      });
+
+      document.getElementById('saveQuoteBtn').addEventListener('click', () => {
+        const { total } = calculateTotals();
+        const quote = {
+          customer: document.getElementById('customerName').value,
+          total,
+          createdAt: new Date().toISOString(),
+        };
+
+        const quotes = JSON.parse(localStorage.getItem('presupuestosProQuotes') || '[]');
+        quotes.push(quote);
+        localStorage.setItem('presupuestosProQuotes', JSON.stringify(quotes));
+        renderHistory();
+      });
+
+      document.getElementById('exportPdfBtn').addEventListener('click', () => {
+        const total = calculateTotals().total;
+        alert('PDF preparado para un total de ' + formatMoney(total));
+      });
+
+      linesBody.addEventListener('input', (event) => {
+        const target = event.target;
+        const index = Number(target.dataset.index);
+        const field = target.dataset.field;
+        if (Number.isFinite(index) && field) {
+          updateLineValue(index, field, target.value);
+        }
+      });
+
+      ['customerType', 'irpfRate', 'irpfEnabled'].forEach((id) => {
+        document.getElementById(id).addEventListener('input', renderSummary);
+        document.getElementById(id).addEventListener('change', renderSummary);
+      });
+
+      renderLines();
+      renderSummary();
+      renderHistory();
+    </script>
+  </body>
+</html>
