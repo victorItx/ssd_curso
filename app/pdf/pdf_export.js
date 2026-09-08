@@ -20,6 +20,7 @@ export function buildPdfDocument(profile, quote) {
     `Cliente: ${quote?.customer ?? 'Cliente'}`,
     `Tipo de cliente: ${quote?.customerType ?? 'empresa'}`,
     `Número: ${quote?.number ?? '2026-001'}`,
+    `Estado: ${quote?.status ?? 'Borrador'}`,
     `Fecha: ${quote?.createdAt ?? new Date().toISOString()}`,
     `Validez: ${quote?.validForDays ?? 30} días`,
     `Base imponible: ${totals.baseImponible.toFixed(2)} €`,

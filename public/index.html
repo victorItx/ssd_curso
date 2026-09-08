@@ -6,42 +6,48 @@
     <title>PresupuestosPro</title>
     <style>
       :root {
-        --bg: #f3f7fb;
+        --bg: #f5f4ef;
         --panel: #ffffff;
-        --panel-alt: #eef4ff;
-        --accent: #2563eb;
-        --accent-soft: #dbeafe;
-        --success: #0f766e;
-        --text: #162033;
-        --muted: #5c6f89;
-        --border: #dbe3ef;
-        --danger: #b91c1c;
-        --shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+        --panel-alt: #f0f1eb;
+        --accent: #245c55;
+        --accent-soft: #dce9e3;
+        --success: #2e6b5b;
+        --text: #202a28;
+        --muted: #66716e;
+        --border: #d9ded9;
+        --danger: #a64b45;
+        --warning: #a56a2f;
+        --shadow: 0 14px 32px rgba(32, 42, 40, 0.07);
+        --space-1: 6px;
+        --space-2: 10px;
+        --space-3: 16px;
+        --space-4: 24px;
+        --space-5: 32px;
       }
 
       * { box-sizing: border-box; }
 
       body {
         margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: linear-gradient(180deg, #eef6ff 0%, var(--bg) 100%);
+        font-family: Georgia, 'Times New Roman', serif;
+        background: linear-gradient(180deg, #faf9f5 0%, var(--bg) 100%);
         color: var(--text);
+        line-height: 1.5;
       }
 
       .shell {
         max-width: 1200px;
-        margin: 32px auto;
-        padding: 0 18px 40px;
+        margin: 0 auto;
+        padding: var(--space-4) 18px 40px;
       }
 
       .topbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        display: grid;
+        gap: var(--space-3);
         background: var(--panel);
         border: 1px solid var(--border);
-        border-radius: 18px;
-        padding: 18px 22px;
+        border-radius: 12px;
+        padding: 18px 22px 12px;
         box-shadow: var(--shadow);
       }
 
@@ -54,8 +60,8 @@
       .brand-mark {
         width: 42px;
         height: 42px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, var(--accent), #60a5fa);
+        border-radius: 8px;
+        background: var(--accent);
         color: white;
         display: grid;
         place-items: center;
@@ -83,10 +89,62 @@
         gap: 24px;
       }
 
+      .section-nav {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        border-top: 1px solid var(--border);
+        padding-top: 10px;
+      }
+
+      .nav-link {
+        color: var(--muted);
+        text-decoration: none;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font: 700 0.88rem/1.2 Arial, sans-serif;
+      }
+
+      .nav-link:hover,
+      .nav-link:focus-visible,
+      .nav-link[aria-current='page'] {
+        color: var(--accent);
+        background: var(--accent-soft);
+        outline: none;
+      }
+
+      .view {
+        display: none;
+      }
+
+      .view.is-active {
+        display: block;
+        animation: appear 180ms ease-out;
+      }
+
+      @keyframes appear {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .view-heading {
+        margin-bottom: var(--space-4);
+      }
+
+      .view-heading h2,
+      .view-heading p {
+        margin: 0;
+      }
+
+      .view-heading p {
+        color: var(--muted);
+        margin-top: var(--space-1);
+      }
+
       .panel {
         background: var(--panel);
         border: 1px solid var(--border);
-        border-radius: 18px;
+        border-radius: 12px;
         box-shadow: var(--shadow);
         padding: 22px;
       }
@@ -117,7 +175,7 @@
       .field input,
       .field select {
         border: 1px solid var(--border);
-        border-radius: 10px;
+        border-radius: 7px;
         padding: 11px 12px;
         font-size: 1rem;
         background: #fff;
@@ -181,16 +239,31 @@
 
       button {
         border: 0;
-        border-radius: 10px;
+        border-radius: 7px;
         padding: 11px 16px;
         font-size: 0.95rem;
         font-weight: 700;
         cursor: pointer;
-        transition: transform 0.15s ease, opacity 0.15s ease;
+        transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .button {
+        display: inline-block;
+        border: 0;
+        border-radius: 7px;
+        padding: 11px 16px;
+        font: 700 0.95rem/1.2 Arial, sans-serif;
+        text-decoration: none;
       }
 
       button:hover { transform: translateY(-1px); }
       button:active { transform: translateY(0); }
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 3px solid rgba(36, 92, 85, 0.28);
+        outline-offset: 2px;
+      }
 
       .primary {
         background: var(--accent);
@@ -208,7 +281,7 @@
       }
 
       .summary {
-        background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+        background: linear-gradient(180deg, #fbfcf8 0%, #eef2ec 100%);
       }
 
       .totals {
@@ -256,8 +329,69 @@
       .history-item {
         background: #fff;
         border: 1px solid var(--border);
-        border-radius: 10px;
+        border-radius: 8px;
         padding: 10px 12px;
+      }
+
+      .activity-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .activity-card {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px;
+        background: var(--panel);
+      }
+
+      .activity-card strong {
+        display: block;
+        font: 700 1.6rem/1.1 Arial, sans-serif;
+        margin-top: 6px;
+      }
+
+      .activity-card span,
+      .eyebrow {
+        color: var(--muted);
+        font: 700 0.73rem/1.2 Arial, sans-serif;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid currentColor;
+        border-radius: 999px;
+        padding: 4px 8px;
+        font: 700 0.76rem/1 Arial, sans-serif;
+      }
+
+      .status::before {
+        content: '•';
+        font-size: 1rem;
+      }
+
+      .status-draft { color: #6b7280; }
+      .status-sent { color: #326b8a; }
+      .status-accepted { color: var(--success); }
+      .status-rejected { color: var(--danger); }
+      .status-expired { color: var(--warning); }
+
+      .empty-state {
+        color: var(--muted);
+        border: 1px dashed var(--border);
+        border-radius: 8px;
+        padding: var(--space-4);
+        text-align: center;
+      }
+
+      .section-stack {
+        display: grid;
+        gap: var(--space-4);
       }
 
       .history-item strong {
@@ -275,10 +409,20 @@
         }
 
         .topbar {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
+          align-items: stretch;
         }
+
+        .activity-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 520px) {
+        .shell { padding-inline: 12px; }
+        .panel { padding: 16px; }
+        .section-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .nav-link { text-align: center; }
+        .activity-grid { grid-template-columns: 1fr 1fr; }
       }
     </style>
   </head>
@@ -287,100 +431,177 @@
       <header class="topbar">
         <div class="brand">
           <div class="brand-mark">P</div>
-          <h1>PresupuestosPro</h1>
+          <div>
+            <h1>PresupuestosPro</h1>
+            <span class="eyebrow">Presupuestos claros, trabajo tranquilo</span>
+          </div>
         </div>
         <span class="badge">Versión local</span>
+        <nav id="sectionNav" class="section-nav" aria-label="Secciones principales">
+          <a class="nav-link" href="#inicio" data-section="inicio" aria-current="page">Inicio</a>
+          <a class="nav-link" href="#presupuestos" data-section="presupuestos">Presupuestos</a>
+          <a class="nav-link" href="#clientes" data-section="clientes">Clientes</a>
+          <a class="nav-link" href="#catalogo" data-section="catalogo">Catálogo</a>
+          <a class="nav-link" href="#perfil" data-section="perfil">Perfil</a>
+        </nav>
       </header>
 
-      <main class="layout">
-        <section class="panel">
-          <h2>Perfil del freelance</h2>
-          <div class="form-grid">
-            <div class="field">
-              <label for="freelancerName">Nombre</label>
-              <input id="freelancerName" type="text" value="Ana García" />
-            </div>
-            <div class="field">
-              <label for="freelancerEmail">Email</label>
-              <input id="freelancerEmail" type="email" value="ana@presupuestospro.es" />
-            </div>
-            <div class="field">
-              <label for="freelancerCif">NIF / CIF</label>
-              <input id="freelancerCif" type="text" value="12345678A" />
-            </div>
-            <div class="field">
-              <label for="freelancerCity">Ciudad</label>
-              <input id="freelancerCity" type="text" value="Madrid" />
-            </div>
+      <main>
+        <section id="inicioView" class="view is-active" data-view="inicio" aria-labelledby="inicioTitle">
+          <div class="view-heading">
+            <span class="eyebrow">Punto de partida</span>
+            <h2 id="inicioTitle">Tu actividad, de un vistazo</h2>
+            <p>Retoma tu trabajo desde un solo lugar.</p>
           </div>
-
-          <div class="lines-panel">
-            <h2>Conceptos del presupuesto</h2>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Servicio</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody id="linesBody"></tbody>
-              </table>
-            </div>
-            <div class="actions">
-              <button type="button" class="secondary" id="addLineBtn">+ Añadir servicio</button>
-            </div>
+          <div class="section-stack">
+            <section class="panel">
+              <div class="activity-grid" id="activityGrid" aria-live="polite"></div>
+            </section>
+            <section class="panel">
+              <h2>Accesos rápidos</h2>
+              <div class="actions">
+                <a class="button primary" href="#presupuestos">Crear o revisar presupuestos</a>
+                <a class="button secondary" href="#catalogo">Consultar catálogo</a>
+                <a class="button secondary" href="#perfil">Revisar perfil</a>
+              </div>
+            </section>
           </div>
         </section>
 
-        <aside class="panel summary">
-          <h2>Cliente y resumen</h2>
-          <div class="form-grid">
-            <div class="field" style="grid-column: 1 / -1;">
-              <label for="customerName">Cliente</label>
-              <input id="customerName" type="text" value="Hotel Sol y Mar" />
-            </div>
+        <section id="presupuestosView" class="view" data-view="presupuestos" aria-labelledby="presupuestosTitle">
+          <div class="view-heading">
+            <span class="eyebrow">Trabajo principal</span>
+            <h2 id="presupuestosTitle">Presupuestos</h2>
+            <p>Prepara una propuesta clara y revisa sus importes.</p>
+          </div>
+          <div class="layout">
+            <section class="panel">
+              <h2>Conceptos del presupuesto</h2>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Servicio</th>
+                      <th>Cantidad</th>
+                      <th>Precio</th>
+                      <th>Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody id="linesBody"></tbody>
+                </table>
+              </div>
+              <div class="actions">
+                <button type="button" class="secondary" id="addLineBtn">+ Añadir servicio</button>
+              </div>
+            </section>
+
+            <aside class="panel summary">
+              <h2>Cliente y resumen</h2>
+              <div class="form-grid">
+                <div class="field" style="grid-column: 1 / -1;">
+                  <label for="customerName">Cliente</label>
+                  <input id="customerName" type="text" value="Hotel Sol y Mar" />
+                </div>
+                <div class="field">
+                  <label for="customerType">Tipo</label>
+                  <select id="customerType">
+                    <option value="empresa">Empresa</option>
+                    <option value="particular">Particular</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="irpfRate">IRPF</label>
+                  <select id="irpfRate">
+                    <option value="15">15%</option>
+                    <option value="7">7%</option>
+                    <option value="0">0%</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="checkbox-row">
+                <input id="irpfEnabled" type="checkbox" checked />
+                <label for="irpfEnabled">Aplicar retención IRPF</label>
+              </div>
+
+              <div class="totals" style="margin-top: 20px;">
+                <div class="total-row"><span>Base imponible</span><strong id="baseValue">0,00 €</strong></div>
+                <div class="total-row"><span>IVA (21%)</span><strong id="ivaValue">0,00 €</strong></div>
+                <div class="total-row"><span>IRPF</span><strong id="irpfValue">0,00 €</strong></div>
+                <div class="highlight"><span>Total</span><strong id="totalValue">0,00 €</strong></div>
+              </div>
+
+              <div class="actions">
+                <button type="button" class="primary" id="saveQuoteBtn">Guardar presupuesto</button>
+                <button type="button" class="warning" id="exportPdfBtn">Exportar PDF</button>
+              </div>
+
+              <div class="history">
+                <h3 style="margin: 0;">Últimos presupuestos</h3>
+                <ul id="historyList" class="history-list"></ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="clientesView" class="view" data-view="clientes" aria-labelledby="clientesTitle">
+          <div class="view-heading">
+            <span class="eyebrow">Relaciones</span>
+            <h2 id="clientesTitle">Clientes</h2>
+            <p>Consulta el cliente asociado al presupuesto que estás preparando.</p>
+          </div>
+          <section class="panel">
             <div class="field">
-              <label for="customerType">Tipo</label>
-              <select id="customerType">
-                <option value="empresa">Empresa</option>
-                <option value="particular">Particular</option>
-              </select>
+              <label for="customerNameReadOnly">Cliente actual</label>
+              <input id="customerNameReadOnly" type="text" value="Hotel Sol y Mar" readonly />
             </div>
-            <div class="field">
-              <label for="irpfRate">IRPF</label>
-              <select id="irpfRate">
-                <option value="15">15%</option>
-                <option value="7">7%</option>
-                <option value="0">0%</option>
-              </select>
+            <p class="empty-state" id="customerEmptyState">Los clientes se muestran a partir de los presupuestos existentes.</p>
+          </section>
+        </section>
+
+        <section id="catalogoView" class="view" data-view="catalogo" aria-labelledby="catalogoTitle">
+          <div class="view-heading">
+            <span class="eyebrow">Biblioteca de servicios</span>
+            <h2 id="catalogoTitle">Catálogo</h2>
+            <p>Ten a mano los conceptos que más utilizas.</p>
+          </div>
+          <section class="panel">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Servicio</th><th>Precio por defecto</th></tr></thead>
+                <tbody id="catalogBody"></tbody>
+              </table>
             </div>
-          </div>
+          </section>
+        </section>
 
-          <div class="checkbox-row">
-            <input id="irpfEnabled" type="checkbox" checked />
-            <label for="irpfEnabled">Aplicar retención IRPF</label>
+        <section id="perfilView" class="view" data-view="perfil" aria-labelledby="perfilTitle">
+          <div class="view-heading">
+            <span class="eyebrow">Identidad profesional</span>
+            <h2 id="perfilTitle">Perfil</h2>
+            <p>La información que acompaña a tus presupuestos.</p>
           </div>
-
-          <div class="totals" style="margin-top: 20px;">
-            <div class="total-row"><span>Base imponible</span><strong id="baseValue">0,00 €</strong></div>
-            <div class="total-row"><span>IVA (21%)</span><strong id="ivaValue">0,00 €</strong></div>
-            <div class="total-row"><span>IRPF</span><strong id="irpfValue">0,00 €</strong></div>
-            <div class="highlight"><span>Total</span><strong id="totalValue">0,00 €</strong></div>
-          </div>
-
-          <div class="actions">
-            <button type="button" class="primary" id="saveQuoteBtn">Guardar presupuesto</button>
-            <button type="button" class="warning" id="exportPdfBtn">Exportar PDF</button>
-          </div>
-
-          <div class="history">
-            <h3 style="margin: 0;">Últimos presupuestos</h3>
-            <ul id="historyList" class="history-list"></ul>
-          </div>
-        </aside>
+          <section class="panel">
+            <div class="form-grid">
+              <div class="field">
+                <label for="freelancerName">Nombre</label>
+                <input id="freelancerName" type="text" value="Ana García" />
+              </div>
+              <div class="field">
+                <label for="freelancerEmail">Email</label>
+                <input id="freelancerEmail" type="email" value="ana@presupuestospro.es" />
+              </div>
+              <div class="field">
+                <label for="freelancerCif">NIF / CIF</label>
+                <input id="freelancerCif" type="text" value="12345678A" />
+              </div>
+              <div class="field">
+                <label for="freelancerCity">Ciudad</label>
+                <input id="freelancerCity" type="text" value="Madrid" />
+              </div>
+            </div>
+          </section>
+        </section>
       </main>
     </div>
 
@@ -401,12 +622,72 @@
       const irpfValue = document.getElementById('irpfValue');
       const totalValue = document.getElementById('totalValue');
       const historyList = document.getElementById('historyList');
+      const activityGrid = document.getElementById('activityGrid');
+      const catalogBody = document.getElementById('catalogBody');
+      const customerNameReadOnly = document.getElementById('customerNameReadOnly');
+      const navLinks = [...document.querySelectorAll('[data-section]')];
+      const views = [...document.querySelectorAll('[data-view]')];
+
+      const statusDefinitions = [
+        { key: 'Borrador', className: 'status-draft' },
+        { key: 'Enviado', className: 'status-sent' },
+        { key: 'Aceptado', className: 'status-accepted' },
+        { key: 'Rechazado', className: 'status-rejected' },
+        { key: 'Caducado', className: 'status-expired' },
+      ];
 
       function formatMoney(value) {
         return new Intl.NumberFormat('es-ES', {
           style: 'currency',
           currency: 'EUR',
         }).format(value || 0);
+      }
+
+      function getSavedQuotes() {
+        return JSON.parse(localStorage.getItem('presupuestosProQuotes') || '[]');
+      }
+
+      function getQuoteStatus(quote) {
+        return statusDefinitions.some(({ key }) => key === quote?.status) ? quote.status : 'Borrador';
+      }
+
+      function statusMarkup(status) {
+        const definition = statusDefinitions.find((item) => item.key === status) || statusDefinitions[0];
+        return `<span class="status ${definition.className}" data-status="${definition.key}">${definition.key}</span>`;
+      }
+
+      function renderActivity() {
+        const quotes = getSavedQuotes();
+        activityGrid.innerHTML = statusDefinitions.map(({ key }) => {
+          const count = quotes.filter((quote) => getQuoteStatus(quote) === key).length;
+          return `<div class="activity-card">${statusMarkup(key)}<strong>${count}</strong><span>presupuestos</span></div>`;
+        }).join('');
+      }
+
+      function renderCatalog() {
+        catalogBody.innerHTML = state.lines.map((line) => `
+          <tr><td>${line.description}</td><td>${formatMoney(line.price)}</td></tr>
+        `).join('') || '<tr><td colspan="2"><span class="empty-state">Todavía no hay servicios en el catálogo.</span></td></tr>';
+      }
+
+      function updateClientView() {
+        customerNameReadOnly.value = document.getElementById('customerName').value;
+      }
+
+      function renderSection(section) {
+        const activeSection = views.some((view) => view.dataset.view === section) ? section : 'inicio';
+        views.forEach((view) => view.classList.toggle('is-active', view.dataset.view === activeSection));
+        navLinks.forEach((link) => {
+          if (link.dataset.section === activeSection) link.setAttribute('aria-current', 'page');
+          else link.removeAttribute('aria-current');
+        });
+        renderActivity();
+        renderCatalog();
+        updateClientView();
+      }
+
+      function syncSectionFromHash() {
+        renderSection(window.location.hash.slice(1) || 'inicio');
       }
 
       function calculateTotals() {
@@ -457,7 +738,7 @@
       }
 
       function renderHistory() {
-        const quotes = JSON.parse(localStorage.getItem('presupuestosProQuotes') || '[]');
+        const quotes = getSavedQuotes();
         historyList.innerHTML = '';
 
         if (!quotes.length) {
@@ -470,7 +751,7 @@
           item.className = 'history-item';
           item.innerHTML = `
             <strong>${quote.customer || 'Sin cliente'}</strong>
-            <span>${formatMoney(quote.total || 0)}</span>
+            <span>${formatMoney(quote.total || 0)} ${statusMarkup(getQuoteStatus(quote))}</span>
           `;
           historyList.appendChild(item);
         });
@@ -494,6 +775,7 @@
         quotes.push(quote);
         localStorage.setItem('presupuestosProQuotes', JSON.stringify(quotes));
         renderHistory();
+        renderActivity();
       });
 
       document.getElementById('exportPdfBtn').addEventListener('click', () => {
@@ -507,8 +789,15 @@
         const field = target.dataset.field;
         if (Number.isFinite(index) && field) {
           updateLineValue(index, field, target.value);
+          renderCatalog();
         }
       });
+
+      navLinks.forEach((link) => link.addEventListener('click', () => {
+        window.requestAnimationFrame(syncSectionFromHash);
+      }));
+      window.addEventListener('hashchange', syncSectionFromHash);
+      document.getElementById('customerName').addEventListener('input', updateClientView);
 
       ['customerType', 'irpfRate', 'irpfEnabled'].forEach((id) => {
         document.getElementById(id).addEventListener('input', renderSummary);
@@ -518,6 +807,9 @@
       renderLines();
       renderSummary();
       renderHistory();
+      renderCatalog();
+      renderActivity();
+      syncSectionFromHash();
     </script>
   </body>
 </html>
