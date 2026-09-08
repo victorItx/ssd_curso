@@ -28,5 +28,8 @@ PresupuestosPro es una aplicación web local para que autónomos españoles cree
 - Derivar los resúmenes del estado existente; no crear fuentes de verdad duplicadas.
 - Añadir pruebas con `node:test` y `node:assert/strict` para cambios de comportamiento.
 - Mantener el alcance simple, local, verificable y definido por las specs.
+- [003] Las exportaciones de datos deben usar un snapshot de solo lectura y permanecer dentro del proceso local, sin crear una fuente de persistencia duplicada.
+- [003] Las representaciones documentales individuales y masivas deben reutilizar el mismo renderer para conservar contenido, presentación e importes.
+- [003] Las copias agrupadas deben validarse completas antes de descargarse y usar nombres de archivo seguros y únicos.
 
 Las reglas de producto viven en .specify/memory/constitution.md y el estado del producto en specs/README.md
