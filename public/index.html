@@ -389,6 +389,16 @@
         text-align: center;
       }
 
+      .backup-status {
+        min-height: 24px;
+        margin: 12px 0 0;
+        color: var(--muted);
+        font: 700 0.85rem/1.4 Arial, sans-serif;
+      }
+
+      .backup-status.is-error { color: var(--danger); }
+      .backup-status.is-success { color: var(--success); }
+
       .section-stack {
         display: grid;
         gap: var(--space-4);
@@ -447,7 +457,7 @@
       </header>
 
       <main>
-        <section id="inicioView" class="view is-active" data-view="inicio" aria-labelledby="inicioTitle">
+        <section id="homeView" class="view is-active" data-view="inicio" aria-labelledby="inicioTitle">
           <div class="view-heading">
             <span class="eyebrow">Punto de partida</span>
             <h2 id="inicioTitle">Tu actividad, de un vistazo</h2>
@@ -534,7 +544,9 @@
               <div class="actions">
                 <button type="button" class="primary" id="saveQuoteBtn">Guardar presupuesto</button>
                 <button type="button" class="warning" id="exportPdfBtn">Exportar PDF</button>
+                <button type="button" class="secondary" id="exportBackupBtn">Exportar todo (.zip)</button>
               </div>
+              <output id="backupStatus" class="backup-status" aria-live="polite" aria-busy="false"></output>
 
               <div class="history">
                 <h3 style="margin: 0;">Últimos presupuestos</h3>
@@ -622,6 +634,8 @@
       const irpfValue = document.getElementById('irpfValue');
       const totalValue = document.getElementById('totalValue');
       const historyList = document.getElementById('historyList');
+      const exportBackupBtn = document.getElementById('exportBackupBtn');
+      const backupStatus = document.getElementById('backupStatus');
       const activityGrid = document.getElementById('activityGrid');
       const catalogBody = document.getElementById('catalogBody');
       const customerNameReadOnly = document.getElementById('customerNameReadOnly');
@@ -649,6 +663,51 @@
 
       function getQuoteStatus(quote) {
         return statusDefinitions.some(({ key }) => key === quote?.status) ? quote.status : 'Borrador';
+      }
+
+      function getLocalDate() {
+        const now = new Date();
+        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      }
+
+      function getProfileSnapshot() {
+        return {
+          name: document.getElementById('freelancerName').value,
+          email: document.getElementById('freelancerEmail').value,
+          nif: document.getElementById('freelancerCif').value,
+          phone: '',
+          logo: localStorage.getItem('presupuestosProLogo') || '',
+        };
+      }
+
+      function getExportSnapshot() {
+        return {
+          exportDate: getLocalDate(),
+          profile: getProfileSnapshot(),
+          catalog: state.lines.map((line, index) => ({
+            id: `srv-${index + 1}`,
+            name: line.description,
+            price: Number(line.price || 0),
+          })),
+          quotes: getSavedQuotes(),
+        };
+      }
+
+      function setBackupStatus(message, type = '') {
+        backupStatus.textContent = message;
+        backupStatus.className = `backup-status${type ? ` is-${type}` : ''}`;
+      }
+
+      function downloadBlob(blob, fileName) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
 
       function statusMarkup(status) {
@@ -765,13 +824,21 @@
 
       document.getElementById('saveQuoteBtn').addEventListener('click', () => {
         const { total } = calculateTotals();
+        const quotes = JSON.parse(localStorage.getItem('presupuestosProQuotes') || '[]');
         const quote = {
+          id: `q-${Date.now()}`,
+          number: `${new Date().getFullYear()}-${String(quotes.length + 1).padStart(3, '0')}`,
           customer: document.getElementById('customerName').value,
+          customerType: document.getElementById('customerType').value,
+          irpfEnabled: document.getElementById('irpfEnabled').checked,
+          irpfRate: Number(document.getElementById('irpfRate').value || 0),
+          lines: state.lines.map((line) => ({ ...line })),
           total,
+          totals: calculateTotals(),
           createdAt: new Date().toISOString(),
+          validForDays: 30,
         };
 
-        const quotes = JSON.parse(localStorage.getItem('presupuestosProQuotes') || '[]');
         quotes.push(quote);
         localStorage.setItem('presupuestosProQuotes', JSON.stringify(quotes));
         renderHistory();
@@ -779,8 +846,58 @@
       });
 
       document.getElementById('exportPdfBtn').addEventListener('click', () => {
-        const total = calculateTotals().total;
-        alert('PDF preparado para un total de ' + formatMoney(total));
+        const quote = {
+          number: `${new Date().getFullYear()}-actual`,
+          customer: document.getElementById('customerName').value,
+          customerType: document.getElementById('customerType').value,
+          irpfEnabled: document.getElementById('irpfEnabled').checked,
+          irpfRate: Number(document.getElementById('irpfRate').value || 0),
+          lines: state.lines.map((line) => ({ ...line })),
+          totals: calculateTotals(),
+          createdAt: new Date().toISOString(),
+          validForDays: 30,
+        };
+        fetch('/api/export-pdf', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ profile: getProfileSnapshot(), quote }),
+        }).then(async (response) => {
+          if (!response.ok) throw new Error((await response.json()).error || 'No se pudo generar el PDF.');
+          const blob = await response.blob();
+          downloadBlob(blob, `${quote.number}.pdf`);
+        }).catch((error) => alert(error.message));
+      });
+
+      exportBackupBtn.addEventListener('click', async () => {
+        if (exportBackupBtn.disabled) return;
+        const snapshot = getExportSnapshot();
+        if (!snapshot.quotes.length) {
+          setBackupStatus('No hay presupuestos para exportar.', 'error');
+          return;
+        }
+
+        exportBackupBtn.disabled = true;
+        backupStatus.setAttribute('aria-busy', 'true');
+        setBackupStatus('Preparando tu copia de seguridad...');
+        try {
+          const response = await fetch('/api/export-backup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(snapshot),
+          });
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'No se pudo preparar la copia.');
+          }
+          const blob = await response.blob();
+          downloadBlob(blob, `presupuestospro-copia-${snapshot.exportDate}.zip`);
+          setBackupStatus('Copia descargada correctamente.', 'success');
+        } catch (error) {
+          setBackupStatus(error.message, 'error');
+        } finally {
+          exportBackupBtn.disabled = false;
+          backupStatus.setAttribute('aria-busy', 'false');
+        }
       });
 
       linesBody.addEventListener('input', (event) => {
